@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import inspect, text
 
 from app.db import engine, Base
@@ -61,3 +62,7 @@ ensure_sqlite_columns()
 
 app.include_router(router, prefix="/api")
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
+
+dist_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+if os.path.isdir(dist_path):
+    app.mount("/", StaticFiles(directory=dist_path, html=True), name="frontend")
